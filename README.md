@@ -41,6 +41,14 @@ To prevent confusion due to identical names, users should input both the faculty
 
 
 
+### Widget 6:
+
+Once the ideal faculty candidate is identified, how can you establish contact? By entering either the known faculty member's name and their affiliated institution, or simply a school name with strong connections, this widget will determine the links to the candidate faculty member.
+
+We employ Neo4j's shortest path finding to reveal how the candidate and known faculty members are connected through a series of alternating "INTERESTED_IN" relationships, connected by "KEYWORD" and "FACULTY" nodes. Up to five paths will be displayed for the user's convenience.
+
+
+
 ## Implementation: 
 
 How did you implement it? What frameworks and libraries or any tools have you used to realize the dashboard and functionalities?
