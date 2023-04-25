@@ -97,14 +97,34 @@ def get_top_universities(keyword):
     return results_df
 
 
-# print(get_top_universities("computer vision").to_string(index=False))
+def get_coauthored_count(faculty_name, university_name, start_year, end_year):
+    with db.cursor() as cursor:
+        # Find the number of co-authored paper for the given faculty during the given time range
+        top_universities_sql = """
+                                SELECT
+                                    F.name,
+                                    COUNT(DISTINCT P.id) AS coauthored_papers
+                                FROM
+                                    faculty F
+                                    JOIN university U ON U.id = F.university_id
+                                    JOIN faculty_publication FP ON F.id = FP.faculty_id
+                                    JOIN publication P ON P.id = FP.publication_id
+                                    JOIN faculty_publication FP2 ON P.id = FP2.publication_id
+                                    JOIN faculty F2 ON F2.id = FP2.faculty_id
+                                WHERE
+                                    F.name = %s
+                                    AND U.name = %s
+                                    AND F2.name != %s
+                                    AND P.year BETWEEN %s AND %s
+                                GROUP BY
+                                    F.name;
 
+                                """
 
-# def get_university(input_value):
-#     with db.cursor() as cursor:
-#         sql = 'select id, name from university where name like "%' + input_value + '%";'
-#         cursor.execute(sql)
-#         result = cursor.fetchall()
-#         return result
-#
-# print(get_university('Yale'))
+        cursor.execute(top_universities_sql, (faculty_name, university_name, faculty_name, start_year, end_year))
+        coauthored_count = cursor.fetchall()
+
+    return coauthored_count
+
+# print(get_coauthored_count("Antonio Torralba", "Massachusetts Institute of Technology", '0', '2023'))
+

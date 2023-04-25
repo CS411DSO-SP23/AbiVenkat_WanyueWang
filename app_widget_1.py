@@ -6,11 +6,9 @@ import pandas as pd
 from mysql_utils import get_top_universities
 
 # Dash constructor (Initialize the app)
-app = Dash(__name__)
-
-# App layout
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# App layout
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([

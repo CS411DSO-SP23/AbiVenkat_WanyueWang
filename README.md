@@ -33,7 +33,11 @@ This widget is designed to accept a user-inputted keyword of interest. Based on 
 
 
 
-![image-20230424200441209](/Users/mac/Library/Mobile Documents/com~apple~CloudDocs/Typora/pictures/image-20230424200441209.png)
+### Widget 2:
+
+For researchers seeking a faculty mentor or collaborator, it's essential to determine if the potential faculty member is open to collaboration. This widget can help identify their collaboration preferences by analyzing the number of co-authored papers they have with other faculty members. Users can apply a time filter to focus on recent collaborations, such as within the past five years.
+
+To prevent confusion due to identical names, users should input both the faculty member's name and their affiliated institution.
 
 
 
