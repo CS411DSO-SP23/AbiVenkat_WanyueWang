@@ -3,7 +3,7 @@ from dash import Dash, html, dcc, callback, Output, Input, dash_table, State
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 
-from mysql_utils import get_top_universities, get_coauthored_count
+from mysql_utils import get_top_universities, get_coauthored_count, get_faculty_krc
 from neo4j_utils import find_faculty_connections
 
 cyto.load_extra_layouts()
@@ -78,6 +78,17 @@ app.layout = dbc.Container([
     ]),
 
     # TODO: Add the layout of widgets 3-5 here
+    html.Div([
+        html.H2("Discover your KRC"),
+        dbc.Row([
+            dbc.Col([
+                html.Label('Input Faculty Name'),
+                dbc.Input(id='faculty_name_krc', type='text', value='', style={'max-width' :  '600px'})
+            ]),
+        dbc.Button("Submit", id="submit-button-widget5", color="primary"),
+        html.Div(id="krc_graph")
+        ]),
+    ],className="widget", style={"height": "auto"}),
 
     # Widget 6: Faculty Connections
     html.Div([
@@ -85,21 +96,21 @@ app.layout = dbc.Container([
         dbc.Row([
             dbc.Col([
                 html.Label('Origin Faculty Name (optional):'),
-                dcc.Input(id='input-origin-faculty', type='text', value='')
+                dbc.Input(id='input-origin-faculty', type='text', value='')
             ]),
             dbc.Col([
                 html.Label('Destination Faculty Name:'),
-                dcc.Input(id='input-dest-faculty', type='text', value='')
+                dbc.Input(id='input-dest-faculty', type='text', value='')
             ])
         ]),
         dbc.Row([
             dbc.Col([
                 html.Label('Origin Institute:'),
-                dcc.Input(id='input-origin-institute', type='text', value='')
+                dbc.Input(id='input-origin-institute', type='text', value='')
             ]),
             dbc.Col([
                 html.Label('Destination Institute:'),
-                dcc.Input(id='input-dest-institute', type='text', value='')
+                dbc.Input(id='input-dest-institute', type='text', value='')
             ])
         ]),
         dbc.Button("Submit", id="submit-button-widget6", color="primary"),
@@ -206,6 +217,38 @@ def display_results_widget6(n_clicks, origin_faculty, origin_institute, dest_fac
     ]
 
     return nodes_elements + edges_elements
+
+
+@app.callback(
+    Output('krc_graph', 'children'),
+    Input('submit-button-widget5', 'n_clicks'),
+    [State('faculty_name_krc', 'value')],
+    prevent_initial_call=True
+)
+def draw_krc_graph(n_clicks, faculty_name):
+    df = get_faculty_krc(faculty_name)
+    return html.Div(
+            dcc.Graph(
+                id='bar chart',
+                figure={
+                    "data": [
+                        {
+                            "x": df["keyword_name"],
+                            "y": df["KRC"],
+                            "type": "bar",
+                            "marker": {"color": "#0B3D91"},
+                        }
+                    ],
+                    "layout": {
+                        'title': 'Keyword Relevant Citation (KRC) Scores for ' + faculty_name,
+                        "xaxis": {"title" : {"text": "Keywords", "standoff"  : "10"}, "automargin":  True},
+                        "yaxis": {"title": "KRC"},
+                        'plot_bgcolor': 'rgb(217,227,241)',
+                        'paper_bgcolor': 'rgb(217,227,241)'
+                    },
+                },
+            )
+    )
 
 # Run the app
 if __name__ == '__main__':
