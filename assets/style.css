@@ -25,7 +25,7 @@
 
 /* Set the maximum height of the table and enable the scrolling */
 .scrollable-table {
-    max-height: 300px; /* Adjust the height according to your desired number of rows */
+    max-height: 350px; /* Adjust the height according to your desired number of rows */
     overflow-y: auto;
     display: block;
 }

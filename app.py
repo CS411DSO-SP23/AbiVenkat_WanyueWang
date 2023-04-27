@@ -25,9 +25,11 @@ app.layout = dbc.Container([
                 dbc.Row([
                     dbc.Col([
                         dbc.Form([
+                            dbc.FormText("Enter a keyword to search for universities and faculty members."),
+                            html.Br(),
+                            html.Br(),
                             dbc.Label("Keyword:", html_for="keyword-input"),
                             dbc.Input(id="keyword-input", type="text", placeholder="Enter keyword"),
-                            dbc.FormText("Enter a keyword to search for universities and faculty members."),
                             dbc.Button("Submit", id="submit-button-widget1", color="primary", className="mt-2")
                         ])
                     ])
@@ -37,7 +39,7 @@ app.layout = dbc.Container([
                         html.Div(id="results-widget1")
                     ])
                 ]),
-            ], className="widget", style={"height": "600px"}),
+            ], className="widget", style={"height": "700px"}),
 
         ], width=6),
 
@@ -67,8 +69,11 @@ app.layout = dbc.Container([
                     ]),
                 ]),
                 dbc.Button("Submit", id="submit-button-widget2", color="primary"),
+                html.Br(),
+                html.Br(),
+                html.Br(),
                 html.Div(id="results-widget2"),
-            ], className="widget", style={"height": "600px"})
+            ], className="widget", style={"height": "700px"})
         ], width=6)
     ]),
 
@@ -77,32 +82,46 @@ app.layout = dbc.Container([
     # Widget 6: Faculty Connections
     html.Div([
         html.H2("Discover Connections to Your Ideal Faculty Candidate"),
-        html.Div([
-            html.Label('Origin Faculty Name (optional):'),
-            dcc.Input(id='input-origin-faculty', type='text', value=''),
-            html.Label('Origin Institute:'),
-            dcc.Input(id='input-origin-institute', type='text', value=''),
-            html.Label('Destination Faculty Name:'),
-            dcc.Input(id='input-dest-faculty', type='text', value=''),
-            html.Label('Destination Institute:'),
-            dcc.Input(id='input-dest-institute', type='text', value=''),
-            html.Button('Submit', id='submit-button', n_clicks=0)
+        dbc.Row([
+            dbc.Col([
+                html.Label('Origin Faculty Name (optional):'),
+                dcc.Input(id='input-origin-faculty', type='text', value='')
+            ]),
+            dbc.Col([
+                html.Label('Destination Faculty Name:'),
+                dcc.Input(id='input-dest-faculty', type='text', value='')
+            ])
         ]),
+        dbc.Row([
+            dbc.Col([
+                html.Label('Origin Institute:'),
+                dcc.Input(id='input-origin-institute', type='text', value='')
+            ]),
+            dbc.Col([
+                html.Label('Destination Institute:'),
+                dcc.Input(id='input-dest-institute', type='text', value='')
+            ])
+        ]),
+        dbc.Button("Submit", id="submit-button-widget6", color="primary"),
+        # html.Button('Submit', id='submit-button', n_clicks=0),
         cyto.Cytoscape(
             id='cytoscape-graph',
             elements=[],
             layout={'name': 'klay'},
-            style={'width': '100%', 'height': '500px'},
+            style={'width': '100%', 'height': '400px'},
             stylesheet=[
                 {
                     'selector': 'node',
                     'style': {
                         'label': 'data(label)',
-                        'text-valign': 'center',
+                        'text-valign': 'top',
                         'text-halign': 'center',
                         'text-wrap': 'wrap',
                         'text-max-width': '150px',
-                        'text-size': 3  # Set font size to 10 pixels
+                        'font-size': 5,
+                        'width': 10,
+                        'height': 10,
+                        'background-color': '#4682B4'
                     }
                 },
                 {
@@ -167,7 +186,7 @@ def display_results_widget2(n_clicks, faculty_name, university_name, start_year,
 
 @app.callback(
     Output('cytoscape-graph', 'elements'),
-    Input('submit-button', 'n_clicks'),
+    Input('submit-button-widget6', 'n_clicks'),
     [State('input-origin-faculty', 'value'),
      State('input-origin-institute', 'value'),
      State('input-dest-faculty', 'value'),
