@@ -1,0 +1,31 @@
+/* Define the styles for the main container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Define the styles for each widget */
+.widget {
+    border: 3px solid #0b3d91;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Define the styles for widget titles */
+.widget h2 {
+    margin-bottom: 20px;
+}
+
+/* Set font size in the table */
+.table {
+    font-size: 13px;
+}
+
+/* Set the maximum height of the table and enable the scrolling */
+.scrollable-table {
+    max-height: 300px; /* Adjust the height according to your desired number of rows */
+    overflow-y: auto;
+    display: block;
+}
