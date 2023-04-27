@@ -74,7 +74,7 @@ app.layout = dbc.Container([
 
     # TODO: Add the layout of widgets 3-5 here
 
-    # Widget 6: Faculty Connections (Integrate the layout from the third widget here)
+    # Widget 6: Faculty Connections
     html.Div([
         html.H2("Discover Connections to Your Ideal Faculty Candidate"),
         html.Div([
@@ -127,10 +127,8 @@ app.layout = dbc.Container([
 )
 def display_results_widget1(n_clicks, keyword):
     if n_clicks and keyword:
-        # Call the get_top_universities function with the given keyword
         df = get_top_universities(keyword)
 
-        # Check if the DataFrame is not empty
         if not df.empty:
             return html.Div([
                 dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
