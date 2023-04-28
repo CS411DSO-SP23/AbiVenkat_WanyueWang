@@ -9,7 +9,7 @@ def connect_to_neo4j(uri, user, password):
 
 neo4j_uri = "bolt://localhost:7687"
 neo4j_user = "neo4j"
-neo4j_password = "wangwang"
+neo4j_password = "test_root"
 
 # driver = connect_to_neo4j(neo4j_uri, neo4j_user, neo4j_password)
 

@@ -3,9 +3,10 @@ from dash import Dash, html, dcc, callback, Output, Input, dash_table, State
 import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 
-from mysql_utils import get_top_universities, get_coauthored_count
+from mysql_utils import get_top_universities, get_coauthored_count, get_faculty_krc
 from neo4j_utils import find_faculty_connections
-
+from mongodb_utils import insert_faculty, delete_faculty, get_favorites
+from dash import callback_context
 cyto.load_extra_layouts()
 
 # Dash constructor (Initialize the app)
@@ -14,6 +15,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
 # App layout
 app.layout = dbc.Container([
     html.Link(rel='stylesheet', href='/assets/style.css'),
+    html.Br(),
     html.H1("FacultyFinder+"),
     html.Hr(),
 
@@ -77,7 +79,57 @@ app.layout = dbc.Container([
         ], width=6)
     ]),
 
-    # TODO: Add the layout of widgets 3-5 here
+    # Widget 3: Faculty KRC Scores
+    html.Div([
+        html.H2("Explore Faculty KRC Information"),
+        dbc.Row([
+            dbc.Col([
+                dbc.FormText("Enter a faculty name to see their keyword releveant citation scores for each of their keywords"),
+                html.Br(),
+                html.Br(),
+                html.Label('Faculty Name'),
+                dbc.Input(id='faculty_name_krc', type='text', value='', style={'max-width' :  '600px'}),
+                dbc.Button("Submit", id="submit-button-widget5", color="primary"),
+                
+            ]),
+        dbc.Row([
+            dbc.Col([
+                html.Br(),
+                html.Div(id="krc_graph")
+            ])
+            
+        ])
+        ]),
+    ],className="widget", style={"height": "auto"}),
+
+    # Widget 4 & 5: Insert and Delete Favorite Faculty
+    html.Div([
+                html.H2("Curate A List of Your Favorite Professors"),
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Faculty Name To Add"),
+                        dbc.Input(id="faculty_insert", type="text", placeholder="Enter faculty name"),
+                    ]),
+                    dbc.Col([
+                        dbc.Label("Faculty Name To Delete"),
+                        dbc.Input(id="faculty_delete", type="text", placeholder="Enter university name"),
+                    ]),
+                ]),
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Note"),
+                        dbc.Input(id="note", type="text", placeholder="(Optional) Note about faculty member"),
+                        dbc.Button("Add", id="add-button-widget4", color="primary"),
+                    ]),
+                    dbc.Col([
+                        dbc.Button("Delete", id="delete-button-widget5", color="primary"),
+                    ])
+                ]),
+                
+                html.Br(),
+                html.Div(id="results_widget45"),
+            ], className="widget", style={"height": "auto"})
+        ,
 
     # Widget 6: Faculty Connections
     html.Div([
@@ -85,21 +137,21 @@ app.layout = dbc.Container([
         dbc.Row([
             dbc.Col([
                 html.Label('Origin Faculty Name (optional):'),
-                dcc.Input(id='input-origin-faculty', type='text', value='')
+                dbc.Input(id='input-origin-faculty', type='text', value='')
             ]),
             dbc.Col([
                 html.Label('Destination Faculty Name:'),
-                dcc.Input(id='input-dest-faculty', type='text', value='')
+                dbc.Input(id='input-dest-faculty', type='text', value='')
             ])
         ]),
         dbc.Row([
             dbc.Col([
                 html.Label('Origin Institute:'),
-                dcc.Input(id='input-origin-institute', type='text', value='')
+                dbc.Input(id='input-origin-institute', type='text', value='')
             ]),
             dbc.Col([
                 html.Label('Destination Institute:'),
-                dcc.Input(id='input-dest-institute', type='text', value='')
+                dbc.Input(id='input-dest-institute', type='text', value='')
             ])
         ]),
         dbc.Button("Submit", id="submit-button-widget6", color="primary"),
@@ -134,7 +186,7 @@ app.layout = dbc.Container([
                 }
             ]
         )
-    ], className="widget", style={"height": "600px"})
+    ], className="widget", style={"height": "auto"})
 
 ], fluid=True)
 
@@ -207,6 +259,60 @@ def display_results_widget6(n_clicks, origin_faculty, origin_institute, dest_fac
 
     return nodes_elements + edges_elements
 
+
+@app.callback(
+    Output('krc_graph', 'children'),
+    Input('submit-button-widget5', 'n_clicks'),
+    [State('faculty_name_krc', 'value')],
+    prevent_initial_call=True
+)
+def draw_krc_graph(n_clicks, faculty_name):
+    df = get_faculty_krc(faculty_name)
+    return html.Div(
+            dcc.Graph(
+                id='bar chart',
+                figure={
+                    "data": [
+                        {
+                            "x": df["keyword_name"],
+                            "y": df["KRC"],
+                            "type": "bar",
+                            "marker": {"color": "#0B3D91"},
+                        }
+                    ],
+                    "layout": {
+                        'title': 'KRC Scores for ' + faculty_name,
+                        "xaxis": {"title" : {"text": "Keywords", "standoff"  : "10"}, "automargin":  True},
+                        "yaxis": {"title": "KRC"},
+                        'plot_bgcolor': 'rgb(217,227,241)',
+                        'paper_bgcolor': 'rgb(217,227,241)',
+                        'height' : '600'
+                    },
+                },
+            )
+    )
+
+
+
+@app.callback(
+    Output('results_widget45', 'children'),
+    Input('add-button-widget4', 'n_clicks'),
+    Input('delete-button-widget5', 'n_clicks'),
+    [State('faculty_insert', 'value'),
+     State('note', 'value'),
+     State('faculty_delete','value')],
+    prevent_initial_call=True
+)
+def update_favorites_table(add_btn, delete_btn, fac_insert, note, fac_delete):
+    if callback_context.triggered_id=="add-button-widget4" and fac_insert is not None:
+        if note is not None:
+            insert_faculty(fac_insert, note)
+        else:
+            insert_faculty(fac_insert)
+    elif callback_context.triggered_id=="delete-button-widget5" and fac_delete is not None:
+        delete_faculty(fac_delete)
+    
+    return dbc.Table.from_dataframe(get_favorites(), striped=True, bordered=True, hover=True, size='lg')
 # Run the app
 if __name__ == '__main__':
     app.run_server(debug=True)

@@ -4,7 +4,7 @@ import pandas as pd
 # Note: the password needs to be 'password'
 db = pymysql.connect(host='localhost',
                 user='root',
-                password='password',
+                password='test_root',
                 database='academicworld',
                 charset='utf8mb4',
                 port=3306,
@@ -126,5 +126,10 @@ def get_coauthored_count(faculty_name, university_name, start_year, end_year):
 
     return coauthored_count
 
+def get_faculty_krc(faculty_name):
+    with db.cursor() as cursor:
+        query = "Select DISTINCT keyword_name, KRC from faculty,faculty_keyword,faculty_krc, keyword where faculty_name ='" + faculty_name + "' and faculty_krc.faculty_name = faculty.name and faculty.id = faculty_keyword.faculty_id and keyword.id = faculty_keyword.keyword_id and keyword.name = keyword_name order by KRC DESC; "
+    df = pd.read_sql(query, db)
+    return df
 # print(get_coauthored_count("Antonio Torralba", "Massachusetts Institute of Technology", '0', '2023'))
 
