@@ -70,7 +70,7 @@ For the frotend styling we mostly used dash bootstrap for theming our components
 
 ## Database Techniques: 
 
-  - To speed up the processing on the favorites table, we created a compound index struction on the faculty name and note column for the favorites table. We     liked this approach as we could have a single index structure that hold references to multiple fields
+  - To speed up the processing on the favorites table, we created a compound index structio on the faculty name and note column for the favorites table. We     liked this approach as we could have a single index structure that hold references to multiple fields
     `db.favorites.createIndex({"faculty_name":1, "note": 1})`
   - Later we realized that we want to create a constraint on this favorites table in that since there could be multiple faculty members that have the same       name, we wanted to make sure at least the combination of a faculty member's name and note would be distinct and this combination is what we could use to     differentiate different faculty members that have the same name. We added a unique attribute constraint to our index and this is applied to the whole         table, so no new data can be added unless the combination of faculty member name and note is unique.
     `db.favorites.createIndex({"faculty_name":1, "note": 1}, {unique : true})`
