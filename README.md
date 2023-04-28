@@ -48,11 +48,11 @@ The user can input a faculty name to retirieve a faculty member's keyword releva
 
 ### Widget 4:
 
-To help users keep track of what faculty members they are interested in, we created a form where a user can input the faculty's name along with an optional note to save it to a favorites table. This table is there present at all times so a user can keep track. This table contains additional information about the faculty member as well pulled from the information we have about them and also can contain a note the user makes about the faculty member. 
+Keeping track of all the faculty members a user may be interested in can be cumbersome if there is no way on the application to keep track. Therefore to help users keep track of what faculty members they are interested in, we created a form where a user can input the faculty's name along with an optional note to save it to a favorites table. This table is there present at all times so a user can keep track. This table contains additional information about the faculty member as well pulled from the information we have about them and also can contain a note the user makes about the faculty member. 
 
 ### Widget 5:
 
-This widget allows a user to delete a faculty member from their favorites table, if they no longer are interested in considering that faculty member.
+This widget allows a user to delete a faculty member from their favorites table if they no longer are interested in considering that faculty member.
 
 ### Widget 6:
 
