@@ -41,7 +41,9 @@ To prevent confusion due to identical names, users should input both the faculty
 
 ### Widget 3:
 
-To ascertain what areas of research a faculty member is most familiar with we implemented a method to retirieve a faculty member's keyword relevant citation score. This is then displayed in a graph in descending order. 
+It's important to know for a student what areas of research a faculty member is most relevant with. Often something like a keyword relevant citation score could be proven to be a useful metric to see how many citations a faculty member is cited for regarding a particular relevant keyword.
+
+The user can input a faculty name to retirieve a faculty member's keyword relevant citation score for the specific keywords the faculty is relevant with. This result is then displays as a graph in descending order to give the user a more holistic look about the faculty member's works.
 
 
 ### Widget 4:
