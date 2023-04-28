@@ -15,6 +15,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
 # App layout
 app.layout = dbc.Container([
     html.Link(rel='stylesheet', href='/assets/style.css'),
+    html.Br(),
     html.H1("FacultyFinder+"),
     html.Hr(),
 
@@ -80,7 +81,7 @@ app.layout = dbc.Container([
 
     # Widget 3: Faculty KRC Scores
     html.Div([
-        html.H2("Faculty KRC Information"),
+        html.H2("Explore Faculty KRC Information"),
         dbc.Row([
             dbc.Col([
                 dbc.FormText("Enter a faculty name to see their keyword releveant citation scores for each of their keywords"),
@@ -103,7 +104,7 @@ app.layout = dbc.Container([
 
     # Widget 4 & 5: Insert and Delete Favorite Faculty
     html.Div([
-                html.H2("Curate a list of your favorite professors"),
+                html.H2("Curate A List of Your Favorite Professors"),
                 dbc.Row([
                     dbc.Col([
                         dbc.Label("Faculty Name To Add"),
@@ -126,10 +127,8 @@ app.layout = dbc.Container([
                 ]),
                 
                 html.Br(),
-                html.Br(),
-                html.Br(),
                 html.Div(id="results_widget45"),
-            ], className="widget", style={"height": "700px"})
+            ], className="widget", style={"height": "auto"})
         ,
 
     # Widget 6: Faculty Connections

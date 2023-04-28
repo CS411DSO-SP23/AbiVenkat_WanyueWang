@@ -33,5 +33,7 @@ def delete_faculty(name):
     favorites.delete_many(faculty)
 
 def get_favorites():
-    return pd.DataFrame(list(favorites.find())).iloc[:, 1:]
+    df = pd.DataFrame(list(favorites.find())).iloc[:, 1:]
+    df.columns  = ["Faculty Name", "Position", "Research Interest", "University", "Note"]
+    return df
 
