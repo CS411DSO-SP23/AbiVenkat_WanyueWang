@@ -2,10 +2,10 @@
 
 ## Title: 
 
-Name of your application.
+FacultyFinder+
 
 ## Purpose: 
-What is the application scenario? Who are the target users? What are the objectives?
+This application's purpose is to help connect students to faculty members that best align with their goals and research pursuits.
 
 ## Demo: 
 
@@ -13,15 +13,15 @@ Give the link to your video demo.
 
 ## Installation: 
 
-How to install the application? You don’t need to include instructions on how to install and initially populate the databases if you only use the given dataset.
+The application is based on python so python will be necessary and so will accompanying packages such as dash. Additionally mysql, neo4j, and mongodb local instances need to be running and the proper local credentials needs to be passed into the relevant utility files to run the application. To run the application use `python app.py` and click the generated local host link presented in the terminal to access the application in your web browser.
 
 ## Usage: 
 
-How to use it? 
+Simply fill out the forms in the widgets to use the application. There are many different things you can do and instructions are located in each widget. 
 
 ## Design: 
 
-What is the design of the application? Overall architecture and components.
+The overall application is written in python utilizing dash. The application uses a specific flavor of dash called bootstrap for the styling and also uses the respective mysql, mongodb, and neo4j python libraries to communicated with the local databases that are running, so the app can read and write data to the databases. 
 
 
 
@@ -39,7 +39,18 @@ For researchers seeking a faculty mentor or collaborator, it's essential to dete
 
 To prevent confusion due to identical names, users should input both the faculty member's name and their affiliated institution.
 
+### Widget 3:
 
+To ascertain what areas of research a faculty member is most familiar with we implemented a method to retirieve a faculty member's keyword relevant citation score. This is then displayed in a graph in descending order. 
+
+
+### Widget 4:
+
+To help users keep track of what faculty members they are interested in, we created a form where a user can input the faculty's name along with an optional note to save it to a favorites table. This table is there present at all times so a user can keep track. This table contains additional information about the faculty member as well pulled from the information we have about them and also can contain a note the user makes about the faculty member. 
+
+### Widget 5:
+
+This widget allows a user to delete a faculty member from their favorites table, if they no longer are interested in considering that faculty member.
 
 ### Widget 6:
 
@@ -51,16 +62,30 @@ We employ Neo4j's shortest path finding to reveal how the candidate and known fa
 
 ## Implementation: 
 
-How did you implement it? What frameworks and libraries or any tools have you used to realize the dashboard and functionalities?
+We implemented our project by using python and more specifically configuring the frontend and backend code using dash. Utilizing pymongo, pymysql, and neo4j libraries we were able to connect inputs from the frontend and integrate those into queries that we submitted on the backend to our databases. The results we got from the databases were mostly fed into pandas dataframes and then those dataframes were manipulated into different dash components to preset grahps, networks, and tables. 
+
+For the frotend styling we mostly used dash bootstrap for theming our components and also for pre-configured CSS styles on certain layout configurations mostly made up table-esque structure consisting of rows and columns.
 
 ## Database Techniques: 
 
-What database techniques have you implemented? How?
-
+  - To speed up the processing on the favorites table, we created a compound index struction on the faculty name and note column for the favorites table. We     liked this approach as we could have a single index structure that hold references to multiple fields
+    `db.favorites.createIndex({"faculty_name":1, "note": 1})`
+  - Later we realized that we want to create a constraint on this favorites table in that since there could be multiple faculty members that have the same       name, we wanted to make sure at least the combination of a faculty member's name and note would be distinct and this combination is what we could use to     differentiate different faculty members that have the same name. We added a unique attribute constraint to our index and this is applied to the whole         table, so no new data can be added unless the combination of faculty member name and note is unique.
+    `db.favorites.createIndex({"faculty_name":1, "note": 1}, {unique : true})`
+  - To have a fast lookup of the KRC scores for a professor for all their related keywords we created a view in mysql. This way in our actualy query code coming from python we could quickly access the KRC scores for the professor we want.
+  ``` 
+    CREATE VIEW faculty_krc AS 
+    SELECT faculty.name as faculty_name, keyword.name as keyword_name, SUM(publication_keyword.score * publication.num_citations) as KRC
+    FROM faculty, keyword, publication, publication_keyword, faculty_publication
+    WHERE faculty.id = faculty_publication.faculty_id AND publication.id = faculty_publication.publication_id
+    AND publication.id = publication_keyword.publication_id AND keyword.id = publication_keyword.keyword_id
+    GROUP BY faculty_name, keyword_name
+    ORDER BY KRC DESC;
+  ```
 ## Extra-Credit Capabilities: 
 
-What extra-credit capabilities have you developed if any?
+N/A
 
 ## Contributions: 
 
-How each member has contributed, in terms of 1) tasks done and 2) time spent?
+Both team members spent equal amounts of time and effort working on the application and the documentation. Widgets 1,2,6 were implmented by Wanyue and widgets 3,4,5 were implemented by Abi. Afterwards both spent time on styling and other areas related to the project such as documentation and the video demo equally.
