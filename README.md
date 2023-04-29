@@ -9,7 +9,7 @@ This application's purpose is to help connect students to faculty members that b
 
 ## Demo: 
 
-Give the link to your video demo. 
+https://mediaspace.illinois.edu/media/t/1_xq82h6fd
 
 ## Installation: 
 
